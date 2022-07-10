@@ -58,4 +58,8 @@ def search_by_tag(tag):
 
 # Requisito 9
 def search_by_category(category):
-    """Seu código deve vir aqui"""
+    news_list = search_news({"category": re.compile(category, re.IGNORECASE)})
+    news_result = []
+    for news in news_list:
+        news_result.append((news["title"], news["url"]))
+    return news_result
