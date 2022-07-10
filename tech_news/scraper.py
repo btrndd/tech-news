@@ -1,3 +1,5 @@
+# import calendar
+# from datetime import datetime
 from parsel import Selector
 import time
 import requests
@@ -37,7 +39,35 @@ def scrape_next_page_link(html_content):
 
 # Requisito 4
 def scrape_noticia(html_content):
-    """Seu código deve vir aqui"""
+    selector = Selector(html_content)
+    url = selector.css("link[rel=canonical]::attr(href)").get()
+    title = selector.css("h1.entry-title::text").get()
+    timestamp = selector.css("ul.post-meta > :nth-child(2)::text").get()
+
+    writer = selector.css("span.author > a::text").get()
+
+    # counting comments
+    all_comments = selector.css("ol.comment-list > li.comment").getall()
+    comments_count = 0
+    if (all_comments is not None):
+        comments_count = len(all_comments)
+    # endregion
+
+    summary_text_list = selector.css(
+        "div.entry-content p:nth-child(2) *::text"
+        ).getall()
+    summary = ''.join(summary_text_list)
+
+    tags = selector.css("a[rel=tag]::text").getall()
+    category = selector.css("span.label::text").get()
+
+    result = dict(zip(
+        ["url", "title", "timestamp",
+            "writer", "comments_count", "summary", "tags", "category"],
+        [url, title, timestamp, writer,
+            comments_count, summary, tags, category]
+        ))
+    return result
 
 
 # Requisito 5
