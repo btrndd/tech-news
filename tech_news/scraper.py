@@ -1,6 +1,8 @@
 # import calendar
 # from datetime import datetime
+import math
 from parsel import Selector
+from tech_news.database import create_news
 import time
 import requests
 
@@ -53,10 +55,12 @@ def scrape_noticia(html_content):
         comments_count = len(all_comments)
     # endregion
 
+    # getting summary
     summary_text_list = selector.css(
         "div.entry-content p:nth-child(2) *::text"
         ).getall()
     summary = ''.join(summary_text_list)
+    # endregion
 
     tags = selector.css("a[rel=tag]::text").getall()
     category = selector.css("span.label::text").get()
@@ -72,4 +76,25 @@ def scrape_noticia(html_content):
 
 # Requisito 5
 def get_tech_news(amount):
-    """Seu código deve vir aqui"""
+    BASE_URL = "https://blog.betrybe.com"
+    content = fetch(BASE_URL)
+    news_url_list = scrape_novidades(content)
+
+    total_news_per_page = len(Selector(content).css(
+        "div.archive-main > article").getall())
+    if (amount > total_news_per_page):
+        total_pages = math.ceil(amount/total_news_per_page)
+        while total_pages > 1:
+            curr_page = scrape_next_page_link(content)
+            content = fetch(curr_page)
+            news_url_list.extend(scrape_novidades(content))
+            total_pages -= 1
+
+    news_list = []
+    for url in news_url_list[:amount]:
+        news_content = fetch(url)
+        news_dict = scrape_noticia(news_content)
+        news_list.append(news_dict)
+
+    create_news(news_list)
+    return news_list
