@@ -3,11 +3,11 @@ def switch_options(option):
     if option == 2:
         input("Digite a data no formato aaaa-mm-dd:")
     elif option == 3:
-        print("Digite a tag:")
+        input("Digite a tag:")
     elif option == 4:
-        print("Digite a categoria:")
-    elif option > 7:
-        print("Opção inválida")
+        input("Digite a categoria:")
+    elif option == int:
+        input("Opção inválida")
 
 
 def analyzer_menu():
