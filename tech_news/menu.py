@@ -20,8 +20,7 @@ Selecione uma das opções a seguir:
 4 - Buscar notícias por categoria;
 5 - Listar top 5 notícias;
 6 - Listar top 5 categorias;
-7 - Sair.
-""")
+7 - Sair.""")
 
     if option == 0:
         input("Digite quantas notícias serão buscadas:")
